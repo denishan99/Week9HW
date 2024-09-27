@@ -1,7 +1,12 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "title": "World Food Production 2021",
-    "width": 800,
+    "title": {
+        "text": "World Food Production 2021",
+        "fontSize": 24,
+        "font": "Arial",
+        "color": "black"
+    },
+    "width": 900,
     "height": 400,
     "projection": {"type": "equalEarth"},
     
@@ -23,6 +28,10 @@
       },
       {
         "filter": "datum.Year == 2021"
+      },
+      {
+        "calculate": "datum['Total Production (Tonnes)'] / 1000000",
+        "as": "Total Production (Million Tonnes)"
       }
     ],
     
@@ -37,16 +46,32 @@
       {
         "mark": {"type": "geoshape"},
         "encoding": {
-          "color": {
-            "field": "Total Production (Tonnes)",
-            "type": "quantitative",
-            "scale": {"scheme": "greens"}
-          },
+            "color": {
+                "field": "Total Production (Million Tonnes)",
+                "type": "quantitative",
+                "scale": {
+                    "scheme": "greens",
+                    "domain": [0, 1600]  
+                }
+            },
           "tooltip": [
             {"field": "properties.NAME", "type": "nominal", "title": "Entity"},
-            {"field": "Total Production (Tonnes)", "type": "quantitative", "title": "Total Production (Tonnes)"}
+            {
+              "field": "Total Production (Million Tonnes)", 
+              "type": "quantitative", 
+              "title": "Total Production (Million Tonnes)", 
+              "format": ".1f",  
+              "formatType": "number"
+            }
           ]
         }
+      },
+      {
+        "data": {
+          "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/2_symbol_map/js/WorldMapWithGraticules.topojson",
+          "format": {"type": "topojson", "feature": "ne_110m_graticules_30"}
+        },
+        "mark": {"type": "geoshape", "fill": null, "stroke": "lightgray"}
       }
     ]
   }
