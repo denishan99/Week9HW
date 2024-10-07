@@ -1,78 +1,133 @@
 {
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "title": {
-        "text": "World Food Production 2021",
-        "fontSize": 24,
-        "font": "Arial",
-        "color": "black"
-    },
-    "width": 900,
-    "height": 400,
-    "projection": {"type": "equalEarth"},
-    
-    "data": {
-      "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/2_symbol_map/js/WorldMapWithGraticules.topojson",
-      "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
-    },
-  
-    "transform": [
-      {
-        "lookup": "properties.NAME",
-        "from": {
-          "data": {
-            "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/data/world%20food%20production.csv"
-          },
-          "key": "Entity",
-          "fields": ["Total Production (Tonnes)", "Year"]
-        }
-      },
-      {
-        "filter": "datum.Year == 2021"
-      },
-      {
-        "calculate": "datum['Total Production (Tonnes)'] / 1000000",
-        "as": "Total Production (Million Tonnes)"
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Food Production",
+    "fontSize": 24,
+    "font": "Arial",
+    "color": "black"
+  },
+  "width": 600,
+  "height": 400,
+  "projection": { "type": "equalEarth" },
+
+  "params": [
+    {
+      "name": "yearSelector",
+      "value": 2021,
+      "bind": {
+        "input": "select",
+        "options": [2018, 2021],
+        "name": "Select Year: "
       }
-    ],
+    },
+    {
+      "name": "zoom_level",
+      "value": 150,  
+      "bind": {
+        "input": "range",
+        "min": 120,   
+        "max": 200,  
+        "step": 10,
+        "name": "Zoom Level: "
+      }
+    },
     
-    "layer": [
-      {
-        "mark": {"type": "geoshape", "fill": "skyblue"},
+    { 
+      "name": "center_to",
+      "value": [0, 0],  
+      "bind": {
+        "input": "select",
+        "options": [
+          [-20, 20],  
+          [100, 60],  
+          [-100, 40], 
+          [-60, -30], 
+          [10, 50],   
+          [140, -25], 
+          [0, -90]    
+        ],
+        "labels": [
+          "Africa",
+          "Asia",
+          "North America",
+          "South America",
+          "Europe",
+          "Australia",
+          "Antarctica"
+        ],
+        "name": "Map Centre: "
+      }
+    }
+    
+  ],
+"projection": {
+  "type": "equirectangular",
+  "center": {"expr": "center_to"},
+  "scale": {"expr": "zoom_level||10000"}  
+},
+
+
+  "data": {
+    "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/js/ne_110m%20(2).json",
+    "format": { "type": "topojson", "feature": "ne_110m_admin_0_countries" }
+  },
+
+  "transform": [
+    {
+      "calculate": "datum.properties.NAME == 'United States of America' ? 'America' : datum.properties.NAME == 'Central African Republic' || datum.properties.NAME == 'Central African Rep.' ? 'Central African Republic' : datum.properties.NAME == 'South Sudan' || datum.properties.NAME == 'S. Sudan' ? 'South Sudan' : datum.properties.NAME == 'Democratic Republic of Congo' || datum.properties.NAME == 'Dem. Rep. Congo' ? 'Democratic Republic of Congo' : datum.properties.NAME == 'Uganda' ? 'Uganda' : datum.properties.NAME",
+      "as": "Standardized_Name"
+    },
+    {
+      "lookup": "Standardized_Name",
+      "from": {
         "data": {
-          "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/js/ne_10m_ocean.json",
-          "format": {"type": "topojson", "feature": "ne_10m_ocean"}
-        }
-      },
-      {
-        "mark": {"type": "geoshape"},
-        "encoding": {
-            "color": {
-                "field": "Total Production (Million Tonnes)",
-                "type": "quantitative",
-                "scale": {
-                    "scheme": "greens",
-                    "domain": [0, 1600]  
-                }
-            },
-          "tooltip": [
-            {"field": "properties.NAME", "type": "nominal", "title": "Entity"},
-            {
-              "field": "Total Production (Million Tonnes)", 
-              "type": "quantitative", 
-              "title": "Total Production (Million Tonnes)", 
-              "format": ".1f",  
-              "formatType": "number"
-            }
-          ]
-        }
-      },
-      {
-        "data": {
-          "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/2_symbol_map/js/WorldMapWithGraticules.topojson",
-          "format": {"type": "topojson", "feature": "ne_110m_graticules_30"}
+          "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/world%20food%20production.csv",
+          "format": { "type": "csv" }
         },
-        "mark": {"type": "geoshape", "fill": null, "stroke": "lightgray"}
+        "key": "Entity",
+        "fields": ["Year", "Total Production (Tonnes)"]
       }
-    ]
-  }
-  
+    },
+    {
+      "filter": "datum.Year == yearSelector"
+    },
+    {
+      "calculate": "datum['Total Production (Tonnes)'] / 1000000",
+      "as": "Total Production (Million Tonnes)"
+    }
+  ],
+
+  "layer": [
+    {
+      "mark": { "type": "geoshape" },
+      "encoding": {
+        "color": {
+          "field": "Total Production (Million Tonnes)",
+          "type": "quantitative",
+          "scale": {
+            "domain": [0, 500, 20000], 
+
+            "scheme": "greens"
+          }
+        },
+        "tooltip": [
+          { "field": "properties.NAME", "type": "nominal", "title": "Entity" },
+          {
+            "field": "Total Production (Million Tonnes)",
+            "type": "quantitative",
+            "title": "Total Production (Million Tonnes)",
+            "format": ",.1f",
+            "formatType": "number"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/js/ne_110m%20(2).json",
+        "format": { "type": "topojson", "feature": "ne_110m_graticules_30" }
+      },
+      "mark": { "type": "geoshape", "fill": null, "stroke": "lightgray" }
+    }
+  ]
+}
