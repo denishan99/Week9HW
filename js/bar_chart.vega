@@ -1,0 +1,107 @@
+{
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "A bar chart showing agricultural productions in Australia for the year 2021.",
+    "width": 600,
+    "height": 400,
+    "padding": 5,
+  
+    "data": [
+      {
+        "name": "productions",
+        "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/world%20food%20production.csv",
+        "format": {
+          "type": "csv"
+        }
+      },
+      {
+        "name": "filteredProductions",
+        "source": "productions",
+        "transform": [
+          {
+            "type": "filter",
+            "expr": "datum.Entity === 'Australia' && toNumber(datum.Year) === 2018"  
+          },
+          {
+            "type": "fold",
+            "fields": [
+              "Maize ",
+              "Rice  ",
+              "Yams  ",
+              "Wheat ",
+              "Tea  ",
+              "Sugar cane ",
+              "Soybeans ",
+              "Potatoes ",
+              "Meat, chicken  ",
+              "Bananas  ",
+              "Avocados ",
+              "Apples "
+            ],
+            "as": ["category", "amount"]
+          }
+        ]
+      }
+    ],
+  
+    "signals": [
+      {
+        "name": "tooltip",
+        "value": {},
+        "on": [
+          { "events": "rect:pointerover", "update": "datum" },
+          { "events": "rect:pointerout", "update": "{}" }
+        ]
+      }
+    ],
+  
+    "scales": [
+      {
+        "name": "xscale",
+        "type": "band",
+        "domain": { "data": "filteredProductions", "field": "category" },
+        "range": "width",
+        "padding": 0.05,
+        "round": true
+      },
+      {
+        "name": "yscale",
+        "domain": { "data": "filteredProductions", "field": "amount" },
+        "nice": true,
+        "range": "height"
+      }
+    ],
+  
+    "axes": [
+      {
+        "orient": "bottom",
+        "scale": "xscale",
+        "labelAngle": 270,
+        "labelPadding": 30
+      },
+      {
+        "orient": "left",
+        "scale": "yscale"
+      }
+    ],
+  
+    "marks": [
+      {
+        "type": "rect",
+        "from": { "data": "filteredProductions" },
+        "encode": {
+          "enter": {
+            "x": { "scale": "xscale", "field": "category" },
+            "width": { "scale": "xscale", "band": 1 },
+            "y": { "scale": "yscale", "field": "amount" },
+            "y2": { "scale": "yscale", "value": 0 }
+          },
+          "update": {
+            "fill": { "value": "steelblue" }
+          },
+          "hover": {
+            "fill": { "value": "red" }
+          }
+        }
+      }
+    ]
+  } 

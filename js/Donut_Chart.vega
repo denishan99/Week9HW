@@ -1,0 +1,240 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "A donut chart and a bar chart for agricultural production in Australia, with a line chart for total production over the years.",
+    "background": "floralwhite",
+  
+    "data": {
+      "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/world%20food%20production.csv",
+      "format": {
+        "type": "csv"
+      }
+    },
+    "vconcat": [
+      {
+        "hconcat": [
+          {
+            "width": 300,
+            "height": 300,
+            "transform": [
+              {
+                "filter": "datum.Entity === 'Australia'"
+              },
+              {
+                "filter": {
+                  "selection": "yearSelector"
+                }
+              },
+              {
+                "fold": [
+                  "Tomatoes ",
+                  "Sweet potatoes  ",
+                  "Sunflower seed  ",
+                  "Rye  ",
+                  "Oranges  ",
+                  "Peas",
+                  "Palm oil ",
+                  "Grapes ",
+                  "Coffee, green ",
+                  "Cocoa beans "
+                ],
+                "as": ["category", "value"]
+              },
+              {
+                "filter": "datum.value > 0"
+              }
+            ],
+            "mark": {
+              "type": "arc",
+              "innerRadius": 100
+            },
+            "encoding": {
+              "theta": {
+                "field": "value",
+                "type": "quantitative"
+              },
+              "color": {
+                "field": "category",
+                "type": "nominal",
+                "scale": {
+                  "domain": [
+                    "Tomatoes ",
+                    "Sweet potatoes  ",
+                    "Sunflower seed  ",
+                    "Rye  ",
+                    "Oranges  ",
+                    "Peas",
+                    "Palm oil ",
+                    "Grapes ",
+                    "Coffee, green ",
+                    "Cocoa beans "
+                  ],
+                  "range": [
+                    "red",
+                    "orange",
+                    "yellow",
+                    "green",
+                    "orange",
+                    "lightgreen",
+                    "beige",
+                    "purple",
+                    "brown",
+                    "lightgray"
+                  ]
+                },
+                "legend": {
+                  "orient": "left", 
+                  "title": "Category",
+                  "offset": 0,
+                  "direction": "vertical"
+                }
+              },
+              "tooltip": [
+                {
+                  "field": "category",
+                  "type": "nominal",
+                  "title": "Category"
+                },
+                {
+                  "field": "value",
+                  "type": "quantitative",
+                  "title": "Value"
+                }
+              ]
+            },
+            "background": "lightgrey"
+          },
+          {
+            "width": 300,
+            "height": 300,
+            "data": {
+              "url": "https://raw.githubusercontent.com/denishan99/Week9HW/refs/heads/main/world%20food%20production.csv",
+              "format": {
+                "type": "csv"
+              }
+            },
+            "transform": [
+              {
+                "filter": "datum.Entity === 'Australia' "
+              },
+              {
+                "filter": {
+                  "selection": "yearSelector"
+                }
+              },
+              {
+                "fold": [
+                  "Maize ",
+                  "Rice  ",
+                  "Yams  ",
+                  "Wheat ",
+                  "Tea  ",
+                  "Sugar cane ",
+                  "Soybeans ",
+                  "Potatoes ",
+                  "Meat, chicken  ",
+                  "Bananas  ",
+                  "Avocados ",
+                  "Apples "
+                ],
+                "as": ["category", "amount"]
+              }
+            ],
+            "mark": "bar",
+            "encoding": {
+              "x": {
+                "field": "category",
+                "type": "ordinal",
+                "title": "",
+
+                "axis": {
+                  "labelAngle": 270,
+                  "labelPadding": 10
+                }
+              },
+              "y": {
+                "field": "amount",
+                "type": "quantitative",
+                "title": ""
+
+              },
+              "tooltip": [
+                {
+                  "field": "category",
+                  "type": "nominal"
+                },
+                {
+                  "field": "amount",
+                  "type": "quantitative",
+                  "title": "Amount (tonnes)"
+                }
+              ]
+            },
+            "background": "lightgrey"
+          }
+        ]
+      },
+      {
+        "width": 700,
+        "height": 300,
+        "transform": [
+          {
+            "filter": "datum.Entity === 'Australia'"
+          },
+          {
+            "aggregate": [
+              {
+                "op": "sum",
+                "field": "Total Production (Tonnes)",
+                "as": "total_production"
+              }
+            ],
+            "groupby": ["Year"]
+          },
+          {
+            "filter": {
+              "selection": "yearSelector"
+            }
+          }
+        ],
+        "mark": "area",
+        "encoding": {
+          "x": {
+            "field": "Year",
+            "type": "temporal",
+            "title": "Year",
+            "scale": {
+              "domain": [
+                {"year": 1961},
+                {"year": 2021}
+              ]
+            }
+          },
+          "y": {
+            "field": "total_production",
+            "type": "quantitative",
+            "title": "Total  Production"
+          },
+          "tooltip": [
+            {
+              "field": "Year",
+              "type": "temporal",
+              "title": "Year"
+            },
+            {
+              "field": "total_production",
+              "type": "quantitative",
+              "title": "Total Production (tonnes)"
+            }
+          ]
+        },
+        "selection": {
+          "yearSelector": {
+            "type": "interval",
+            "encodings": ["x"]
+          }
+        },
+        "background": "lightgrey"
+      }
+    ]
+  }
+  

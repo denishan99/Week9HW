@@ -1,0 +1,79 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "config": { "view": { "stroke": "" } },
+    "width": 800,
+    "height": 400,
+    "data": {
+      "values": [
+        { "year": "2018", "food_group": "Non-alcoholic beverages (g)", "amount": 360.3 },
+        { "year": "2018", "food_group": "Cereals and cereal products (g)", "amount": 130.6 },
+        { "year": "2018", "food_group": "Fruit products (g)", "amount": 149.6 },
+        { "year": "2018", "food_group": "Meat and poultry products (g)", "amount": 143.9 },
+        { "year": "2018", "food_group": "Milk products (g)", "amount": 282.9 },
+        { "year": "2018", "food_group": "Vegetable products (g)", "amount": 190.3 },
+        { "year": "2018", "food_group": "Other (g)", "amount": 274.4 },
+        { "year": "2019", "food_group": "Non-alcoholic beverages (g)", "amount": 365.6 },
+        { "year": "2019", "food_group": "Cereals and cereal products (g)", "amount": 135 },
+        { "year": "2019", "food_group": "Fruit products (g)", "amount": 146.8 },
+        { "year": "2019", "food_group": "Meat and poultry products (g)", "amount": 143.8 },
+        { "year": "2019", "food_group": "Milk products (g)", "amount": 283.8 },
+        { "year": "2019", "food_group": "Vegetable products (g)", "amount": 198.5 },
+        { "year": "2019", "food_group": "Other (g)", "amount": 288.2 },
+        { "year": "2020", "food_group": "Non-alcoholic beverages (g)", "amount": 388 },
+        { "year": "2020", "food_group": "Cereals and cereal products (g)", "amount": 130.6 },
+        { "year": "2020", "food_group": "Fruit products (g)", "amount": 149.1 },
+        { "year": "2020", "food_group": "Meat and poultry products (g)", "amount": 145.9 },
+        { "year": "2020", "food_group": "Milk products (g)", "amount": 280.8 },
+        { "year": "2020", "food_group": "Vegetable products (g)", "amount": 200.8 },
+        { "year": "2020", "food_group": "Other (g)", "amount": 288.6 },
+        { "year": "2021", "food_group": "Non-alcoholic beverages (g)", "amount": 408.9 },
+        { "year": "2021", "food_group": "Cereals and cereal products (g)", "amount": 132.3 },
+        { "year": "2021", "food_group": "Fruit products (g)", "amount": 149.6 },
+        { "year": "2021", "food_group": "Meat and poultry products (g)", "amount": 149.1 },
+        { "year": "2021", "food_group": "Milk products (g)", "amount": 277.9 },
+        { "year": "2021", "food_group": "Vegetable products (g)", "amount": 200 },
+        { "year": "2021", "food_group": "Other (g)", "amount": 288.9 },
+        { "year": "2022", "food_group": "Non-alcoholic beverages (g)", "amount": 400 },
+        { "year": "2022", "food_group": "Cereals and cereal products (g)", "amount": 128.6 },
+        { "year": "2022", "food_group": "Fruit products (g)", "amount": 137.8 },
+        { "year": "2022", "food_group": "Meat and poultry products (g)", "amount": 146.6 },
+        { "year": "2022", "food_group": "Milk products (g)", "amount": 267.4 },
+        { "year": "2022", "food_group": "Vegetable products (g)", "amount": 185.8 },
+        { "year": "2022", "food_group": "Other (g)", "amount": 277.5 }
+      ]
+    },
+    "transform": [
+      {
+        "calculate": "{'Non-alcoholic beverages (g)': '🥤', 'Cereals and cereal products (g)': '🌾', 'Fruit products (g)': '🍏', 'Meat and poultry products (g)': '🍗', 'Milk products (g)': '🥛', 'Vegetable products (g)': '🥦', 'Other (g)': '🍽️'}[datum.food_group]",
+        "as": "emoji"
+      }
+    ],
+    "mark": { "type": "text", "baseline": "middle" },
+    "encoding": {
+      "x": { "field": "amount", "type": "quantitative", "axis": { "title": "Amount (g)" } },
+      "y": { "field": "food_group", "type": "nominal", "axis": { "title": "Food Group" } },
+      "text": { "field": "emoji", "type": "nominal" },
+      "size": { "value": 65 }
+    },
+    "selection": {
+      "yearSelect": {
+        "type": "single",
+        "fields": ["year"],
+        "init": { "year": "2018" },
+        "bind": {
+          "input": "range",
+          "min": 2018,
+          "max": 2022,
+          "step": 1
+        }
+      }
+    },
+    "transform": [
+      {
+        "filter": {
+          "field": "year",
+          "oneOf": {"signal": "yearSelect.year"}
+        }
+      }
+    ]
+}
